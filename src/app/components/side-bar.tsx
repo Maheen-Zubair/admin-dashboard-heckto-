@@ -1,4 +1,4 @@
-import {Star, LayoutDashboard, ShoppingCart, Box, CreditCard, Users,Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import {Star, LayoutDashboard, ShoppingCart, Box, CreditCard, Users, Search, Settings } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,

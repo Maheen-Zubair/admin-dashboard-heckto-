@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table } from "@/components/ui/table";
-import { Star, Edit, Trash2, Eye, ChevronDown, ChevronUp } from "lucide-react";
+import { Star, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { client } from "@/sanity/lib/client";
 import { useState, useEffect } from "react";
 import React from "react";

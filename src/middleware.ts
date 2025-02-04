@@ -26,8 +26,6 @@ export default clerkMiddleware(async (auth, req) => {
   
   if (userRole === "admin") return;
 
-  const { pathname } = new URL(req.url);
-
   for (const route of protectedRoutes) {
     if (route.matcher(req) && userRole !== route.requiredRole) {
       return Response.redirect(new URL(UNAUTHORIZED_URL, req.url)); 
