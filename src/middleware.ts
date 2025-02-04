@@ -9,7 +9,7 @@ const protectedRoutes = [
 ];
 
 export default clerkMiddleware(async (auth, req) => {
-  const CLERK_SIGN_IN_URL = "https://rich-duck-49.accounts.dev/sign-in?redirect_url=https://your-vercel-project.vercel.app/dashboard";
+  const CLERK_SIGN_IN_URL = "https://rich-duck-49.accounts.dev/sign-in?redirect_url=https://admin-dashboard-heckto-00-l9jp3q1v3-maheen-zubairs-projects.vercel.app/dashboard";
   const UNAUTHORIZED_URL = "/unauthorized";
 
   const { userId } = await auth();
