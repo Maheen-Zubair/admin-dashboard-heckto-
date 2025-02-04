@@ -9,27 +9,22 @@ const protectedRoutes = [
 ];
 
 export default clerkMiddleware(async (auth, req) => {
-  // Sign-in page URL
-  const CLERK_SIGN_IN_URL = "https://rich-duck-49.accounts.dev/sign-in?redirect_url=/dashboard";
+  const CLERK_SIGN_IN_URL = "https://rich-duck-49.accounts.dev/sign-in?redirect_url=https://your-vercel-project.vercel.app/dashboard";
   const UNAUTHORIZED_URL = "/unauthorized";
 
-  // Check if the user is authenticated
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.redirect(CLERK_SIGN_IN_URL);
   }
 
-  // Fetch user role
   const client = await clerkClient();
   const user = await client.users.getUser(userId);
   const userRole = user.publicMetadata?.role;
 
-  // Allow admin users access to everything
   if (userRole === "admin") {
     return NextResponse.next();
   }
 
-  // Check route permissions
   for (const route of protectedRoutes) {
     if (route.matcher(req) && userRole !== route.requiredRole) {
       return NextResponse.redirect(new URL(UNAUTHORIZED_URL, req.url));
