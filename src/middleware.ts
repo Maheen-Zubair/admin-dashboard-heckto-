@@ -9,13 +9,15 @@ const protectedRoutes = [
 ];
 
 export default clerkMiddleware(async (auth, req) => {
-  const CLERK_SIGN_IN_URL = "https://rich-duck-49.accounts.dev/sign-in?redirect_url=https://admin-dashboard-heckto-00-l9jp3q1v3-maheen-zubairs-projects.vercel.app";
+  const CLERK_SIGN_IN_URL = "https://rich-duck-49.accounts.dev/sign-in";
   const UNAUTHORIZED_URL = "/unauthorized";
 
   const { userId } = await auth();
+  console.log("UserID:", userId); // Debugging ke liye
   if (!userId) {
     return NextResponse.redirect(CLERK_SIGN_IN_URL);
   }
+  
 
   const client = await clerkClient();
   const user = await client.users.getUser(userId);
