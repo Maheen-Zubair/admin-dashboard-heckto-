@@ -1,7 +1,6 @@
 import { clerkMiddleware, createRouteMatcher, clerkClient } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-// Define protected routes and required roles
 const protectedRoutes = [
   { matcher: createRouteMatcher(["/inventory", "/order"]), requiredRole: "inventory" },
   { matcher: createRouteMatcher(["/payment", "/customer"]), requiredRole: "payment" },
@@ -9,28 +8,40 @@ const protectedRoutes = [
 ];
 
 export default clerkMiddleware(async (auth, req) => {
-  const CLERK_SIGN_IN_URL = "https://rich-duck-49.accounts.dev/sign-in";
+  const CLERK_SIGN_IN_URL = "https://rich-duck-49.accounts.dev/sign-in?redirect_url=https://admin-dashboard-heckto-00-l9jp3q1v3-maheen-zubairs-projects.vercel.app/dashboard";
   const UNAUTHORIZED_URL = "/unauthorized";
 
-  const { userId } = await auth();
-  console.log("UserID:", userId); // Debugging ke liye
-  if (!userId) {
+  const session = await auth();
+  console.log("Session Data:", session);
+
+  if (!session || !session.userId) {
+    console.log("No valid session found. Redirecting to sign-in.");
     return NextResponse.redirect(CLERK_SIGN_IN_URL);
   }
-  
 
-  const client = await clerkClient();
-  const user = await client.users.getUser(userId);
-  const userRole = user.publicMetadata?.role;
+  const { userId } = session;
+  console.log("UserID:", userId);
 
-  if (userRole === "admin") {
-    return NextResponse.next();
-  }
+  try {
+    const client = await clerkClient();
+    const user = await client.users.getUser(userId);
+    const userRole = user.publicMetadata?.role;
 
-  for (const route of protectedRoutes) {
-    if (route.matcher(req) && userRole !== route.requiredRole) {
-      return NextResponse.redirect(new URL(UNAUTHORIZED_URL, req.url));
+    console.log("User Role:", userRole);
+
+    if (userRole === "admin") {
+      return NextResponse.next();
     }
+
+    for (const route of protectedRoutes) {
+      if (route.matcher(req) && userRole !== route.requiredRole) {
+        console.log(`Unauthorized access to ${req.url}, redirecting...`);
+        return NextResponse.redirect(new URL(UNAUTHORIZED_URL, req.url));
+      }
+    }
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return NextResponse.redirect(CLERK_SIGN_IN_URL);
   }
 
   return NextResponse.next();
